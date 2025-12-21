@@ -61,10 +61,10 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-        
+
 
         // drive model parameters
-        public double inPerTick = 1;
+        public double inPerTick = 1500;
         public double lateralInPerTick = inPerTick;
         public double trackWidthTicks = 0;
 
@@ -125,7 +125,7 @@ public final class MecanumDrive {
         public final Encoder leftFrontDrive, leftBackDrive, rightBackDrive, rightFrontDrive;
         public final IMU imu;
 
-        private int lastleftFrontDrivePos, lastleftBackDrivePos, lastrightBackDrivePos, lastrightFrontDrivePos;
+        private int lastLeftFrontDrivePos, lastLeftBackDrivePos, lastRightBackDrivePos, lastRightFrontDrivePos;
         private Rotation2d lastHeading;
         private boolean initialized;
         private Pose2d pose;
@@ -138,8 +138,8 @@ public final class MecanumDrive {
 
             imu = lazyImu.get();
 
-            // TODO: reverse encoders if needed
-            //   leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+            // Reverse motors if needed
+            // leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
             this.pose = pose;
         }
@@ -156,66 +156,44 @@ public final class MecanumDrive {
 
         @Override
         public PoseVelocity2d update() {
-            PositionVelocityPair leftFrontDrivePosVel = leftFrontDrive.getPositionAndVelocity();
-            PositionVelocityPair leftBackDrivePosVel = leftBackDrive.getPositionAndVelocity();
-            PositionVelocityPair rightBackDrivePosVel = rightBackDrive.getPositionAndVelocity();
-            PositionVelocityPair rightFrontDrivePosVel = rightFrontDrive.getPositionAndVelocity();
+            PositionVelocityPair lf = leftFrontDrive.getPositionAndVelocity();
+            PositionVelocityPair lb = leftBackDrive.getPositionAndVelocity();
+            PositionVelocityPair rb = rightBackDrive.getPositionAndVelocity();
+            PositionVelocityPair rf = rightFrontDrive.getPositionAndVelocity();
 
             YawPitchRollAngles angles = imu.getRobotYawPitchRollAngles();
-
-            FlightRecorder.write("MECANUM_LOCALIZER_INPUTS", new MecanumLocalizerInputsMessage(
-                    leftFrontDrivePosVel, leftBackDrivePosVel, rightBackDrivePosVel, rightFrontDrivePosVel, angles));
-
             Rotation2d heading = Rotation2d.exp(angles.getYaw(AngleUnit.RADIANS));
 
             if (!initialized) {
                 initialized = true;
-
-                lastleftFrontDrivePos = leftFrontDrivePosVel.position;
-                lastleftBackDrivePos = leftBackDrivePosVel.position;
-                lastrightBackDrivePos = rightBackDrivePosVel.position;
-                lastrightFrontDrivePos = rightFrontDrivePosVel.position;
-
+                lastLeftFrontDrivePos = lf.position;
+                lastLeftBackDrivePos = lb.position;
+                lastRightBackDrivePos = rb.position;
+                lastRightFrontDrivePos = rf.position;
                 lastHeading = heading;
-
                 return new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0);
             }
 
             double headingDelta = heading.minus(lastHeading);
             Twist2dDual<Time> twist = kinematics.forward(new MecanumKinematics.WheelIncrements<>(
-                    new DualNum<Time>(new double[]{
-                            (leftFrontDrivePosVel.position - lastleftFrontDrivePos),
-                            leftFrontDrivePosVel.velocity,
-                    }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
-                            (leftBackDrivePosVel.position - lastleftBackDrivePos),
-                            leftBackDrivePosVel.velocity,
-                    }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
-                            (rightBackDrivePosVel.position - lastrightBackDrivePos),
-                            rightBackDrivePosVel.velocity,
-                    }).times(PARAMS.inPerTick),
-                    new DualNum<Time>(new double[]{
-                            (rightFrontDrivePosVel.position - lastrightFrontDrivePos),
-                            rightFrontDrivePosVel.velocity,
-                    }).times(PARAMS.inPerTick)
+                    new DualNum<>(new double[]{(lf.position - lastLeftFrontDrivePos) * PARAMS.inPerTick, lf.velocity * PARAMS.inPerTick}),
+                    new DualNum<>(new double[]{(lb.position - lastLeftBackDrivePos) * PARAMS.inPerTick, lb.velocity * PARAMS.inPerTick}),
+                    new DualNum<>(new double[]{(rb.position - lastRightBackDrivePos) * PARAMS.inPerTick, rb.velocity * PARAMS.inPerTick}),
+                    new DualNum<>(new double[]{(rf.position - lastRightFrontDrivePos) * PARAMS.inPerTick, rf.velocity * PARAMS.inPerTick})
             ));
 
-            lastleftFrontDrivePos = leftFrontDrivePosVel.position;
-            lastleftBackDrivePos = leftBackDrivePosVel.position;
-            lastrightBackDrivePos = rightBackDrivePosVel.position;
-            lastrightFrontDrivePos = rightFrontDrivePosVel.position;
-
+            lastLeftFrontDrivePos = lf.position;
+            lastLeftBackDrivePos = lb.position;
+            lastRightBackDrivePos = rb.position;
+            lastRightFrontDrivePos = rf.position;
             lastHeading = heading;
 
-            pose = pose.plus(new Twist2d(
-                    twist.line.value(),
-                    headingDelta
-            ));
+            pose = pose.plus(new Twist2d(twist.line.value(), headingDelta));
 
             return twist.velocity().value();
         }
     }
+
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
@@ -452,14 +430,14 @@ public final class MecanumDrive {
     public PoseVelocity2d updatePoseEstimate() {
         PoseVelocity2d vel = localizer.update();
         poseHistory.add(localizer.getPose());
-        
+
         while (poseHistory.size() > 100) {
             poseHistory.removeFirst();
         }
 
         estimatedPoseWriter.write(new PoseMessage(localizer.getPose()));
-        
-        
+
+
         return vel;
     }
 

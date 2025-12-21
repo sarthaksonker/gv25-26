@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="Driver Control", group="Test")
+@TeleOp(name="Driver Control  ...", group="Test")
 public class TeleOpV1 extends DriveBase {
 
     // Shooter Speeds
