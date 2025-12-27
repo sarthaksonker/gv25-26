@@ -65,7 +65,9 @@ public final class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 0.00201;
-        public double lateralInPerTick = 0.0239;
+
+        // public double lateralInPerTick = 0.0239; // ❌ way too large, breaks splines
+        public double lateralInPerTick = inPerTick; // ✅ correct starting value
         public double trackWidthTicks = 16.75;
 
         // feedforward parameters (in tick units)
@@ -85,7 +87,7 @@ public final class MecanumDrive {
         // path controller gains
         public double axialGain = 1.0;
         public double lateralGain = 1.0;
-        public double headingGain = 2.5; // shared with turn
+        public double headingGain = 0.8; // shared with turn
 
         public double axialVelGain = 0.0;
         public double lateralVelGain = 0.0;
@@ -219,8 +221,8 @@ public final class MecanumDrive {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // TODO: reverse motor directions if needed
-       leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+   //   leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+      leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 

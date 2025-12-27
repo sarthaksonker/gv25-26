@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name="Drive Test", group="test")
+@TeleOp(name="Drive Test", group="autonomous")
 public class Drive_Test extends LinearOpMode {
 
     @Override
