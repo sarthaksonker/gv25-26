@@ -14,16 +14,23 @@ public final class SplineTest extends LinearOpMode {
 
         // Only MecanumDrive, no TankDrive confusion
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
-
         waitForStart();
 
-        // Spline sequence: move forward with gradual heading changes
+        // Spline sequence: move forward with final heading locked
         Actions.runBlocking(
                 drive.actionBuilder(beginPose)
-                        .splineTo(new Vector2d(8, 4), Math.PI / 6)   // small forward-right curve
-                     .splineTo(new Vector2d(16, 8), Math.PI / 4)  // continue forward, slight turn
-                     //   .splineTo(new Vector2d(24, 12), Math.PI / 3) // continue forward, gradual right
+                        .splineToLinearHeading(
+                                new Pose2d(24, 12, Math.PI / 6), // final pose including heading
+                                Math.PI / 6                       // approach heading along spline
+                        )
                         .build()
         );
     }
 }
+
+
+
+
+// .splineTo(new Vector2d(24, 12), Math.PI / 6 )   // small forward-right curve, and math.PI = a 180 degree turn so how ever much u divide by is how u will turn
+//   .splineTo(new Vector2d(16, 8), Math.PI / 4)  // continue forward, slight turn
+//  .splineTo(new Vector2d(30, 18), Math.PI / 3) // continue forward, gradual right

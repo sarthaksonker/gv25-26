@@ -221,7 +221,7 @@ public final class MecanumDrive {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // TODO: reverse motor directions if needed
-   //   leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+    // leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE); this needs to be reversed for spline to work
       leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
