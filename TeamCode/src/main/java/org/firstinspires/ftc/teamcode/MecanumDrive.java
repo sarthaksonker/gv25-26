@@ -61,7 +61,7 @@ public final class MecanumDrive {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
                 RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
-
+ 
 
         // drive model parameters
         public double inPerTick = 0.00201;
@@ -176,10 +176,13 @@ public final class MecanumDrive {
                 return new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0);
             }
 
+
+
             double headingDelta = heading.minus(lastHeading);
             Twist2dDual<Time> twist = kinematics.forward(new MecanumKinematics.WheelIncrements<>(
-                    new DualNum<>(new double[]{(lf.position - lastLeftFrontDrivePos) * PARAMS.inPerTick, lf.velocity * PARAMS.inPerTick}),
-                    new DualNum<>(new double[]{(lb.position - lastLeftBackDrivePos) * PARAMS.inPerTick, lb.velocity * PARAMS.inPerTick}),
+                    new DualNum<>(new double[]{-(lf.position - lastLeftFrontDrivePos) * PARAMS.inPerTick, -lf.velocity * PARAMS.inPerTick}),
+                    new DualNum<>(new double[]{-(lb.position - lastLeftBackDrivePos) * PARAMS.inPerTick, -lb.velocity * PARAMS.inPerTick}),
+
                     new DualNum<>(new double[]{(rb.position - lastRightBackDrivePos) * PARAMS.inPerTick, rb.velocity * PARAMS.inPerTick}),
                     new DualNum<>(new double[]{(rf.position - lastRightFrontDrivePos) * PARAMS.inPerTick, rf.velocity * PARAMS.inPerTick})
             ));
@@ -190,9 +193,16 @@ public final class MecanumDrive {
             lastRightFrontDrivePos = rf.position;
             lastHeading = heading;
 
-            pose = pose.plus(new Twist2d(twist.line.value(), headingDelta));
+            // ✅ FIX: use IMU heading directly, avoid orbit
+            pose = new Pose2d(
+                    pose.position.x,   // don’t add any encoder-based movement
+                    pose.position.y,   // stay in the same spot
+                    heading.toDouble() // update heading from IMU
+            );
+
 
             return twist.velocity().value();
+
         }
     }
 
@@ -212,8 +222,8 @@ public final class MecanumDrive {
 //        rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rightFrontDrive");
         leftFrontDrive = hardwareMap.get(DcMotorEx.class, "lf");
         leftBackDrive = hardwareMap.get(DcMotorEx.class, "lb");
-       rightBackDrive = hardwareMap.get(DcMotorEx.class, "rb");
-       rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rf");
+        rightBackDrive = hardwareMap.get(DcMotorEx.class, "rb");
+        rightFrontDrive = hardwareMap.get(DcMotorEx.class, "rf");
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -221,8 +231,10 @@ public final class MecanumDrive {
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // TODO: reverse motor directions if needed
-    // leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE); this needs to be reversed for spline to work
-      leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE); //this needs to be reversed for spline to work
+        leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+//     rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -239,8 +251,9 @@ public final class MecanumDrive {
     }
 
     public void setDrivePowers(PoseVelocity2d powers) {
-        MecanumKinematics.WheelVelocities<Time> wheelVels = new MecanumKinematics(1).inverse(
+        MecanumKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(
                 PoseVelocity2dDual.constant(powers, 1));
+
 
         double maxPowerMag = 1;
         for (DualNum<Time> power : wheelVels.all()) {

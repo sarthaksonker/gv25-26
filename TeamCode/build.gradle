@@ -32,11 +32,8 @@ repositories {
 dependencies {
     implementation project(':FtcRobotController')
 
-    // Road Runner 1.x (CORRECT set)
     implementation "com.acmerobotics.roadrunner:ftc:0.1.25"
     implementation "com.acmerobotics.roadrunner:core:1.0.1"
     implementation "com.acmerobotics.roadrunner:actions:1.0.1"
-
-    // Dashboard
     implementation "com.acmerobotics.dashboard:dashboard:0.5.1"
 }

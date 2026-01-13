@@ -17,7 +17,7 @@ public class AutoConstants {
     public static double turboMultiplier = 1.0;
 
     // Intake and Worm scaling (joystick multipliers)
-    public static double intakeMultiplier = 1.0;
+    public static double intakeMultiplier = -1.0;
     public static double wormMultiplier = 1.0;
 
 

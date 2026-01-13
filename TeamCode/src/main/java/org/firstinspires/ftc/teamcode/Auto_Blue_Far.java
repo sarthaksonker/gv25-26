@@ -1,98 +1,47 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Red Far Auto")
+@Autonomous(name = "Blue Far")
 public class Auto_Blue_Far extends LinearOpMode {
 
-    enum State {
-        MOVE_TO_SHOOT_1,
-        SHOOT_1,
-        GET_SET_2,
-        MOVE_TO_SHOOT_2,
-        SHOOT_2,
-        RESET_HEADING,
-        DONE
-    }
+    MecanumDrive drive;
+
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
 
-        Pose2d startPose = new Pose2d(68, -22, Math.toRadians(180));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, startPose);
+        Pose2d startPose = new Pose2d(60, -22, Math.PI); // facing LEFT
+        drive = new MecanumDrive(hardwareMap, startPose);
 
         waitForStart();
         if (isStopRequested()) return;
 
-        State state = State.MOVE_TO_SHOOT_1;
+        // 1️⃣ DRIVE LEFT 3 inches
+        Action driveLeft = drive.actionBuilder(startPose)
+                .lineToX(57)
+                .build();
 
+        Actions.runBlocking(driveLeft);
 
-        Action moveToShoot1 =
-                drive.actionBuilder(startPose)
-                        .lineToX(0)
-                        .splineToConstantHeading(new Vector2d(0, 0), Math.PI / 6)
-                        .turn(-Math.PI / 7)
-                        .build();
+        // 2️⃣ TURN IN PLACE (no translation drift)
+        double oldAxial = MecanumDrive.PARAMS.axialGain;
+        double oldLateral = MecanumDrive.PARAMS.lateralGain;
 
+        MecanumDrive.PARAMS.axialGain = 0;
+        MecanumDrive.PARAMS.lateralGain = 0;
 
-        Action getSet2 =
-                drive.actionBuilder(startPose)
-                     //   .waitSeconds(2)
-                        .lineToX(10)
-                        .turn(-Math.PI / 3)
-                        .lineToY(-46.5)
-                        .waitSeconds(3)
-                        .build();
+        Action turn = drive.actionBuilder(drive.localizer.getPose())
+                .turnTo(Math.PI / 1.5)
+                .build();
 
-        Action moveToShoot2 =
-                drive.actionBuilder(startPose)
-                        .splineToConstantHeading(new Vector2d(0, 0), Math.PI / 6)
-                        .turn(Math.PI / 4)
-                        .build();
+        Actions.runBlocking(turn);
 
-        Action resetHeading =
-                drive.actionBuilder(startPose)
-                        .splineToConstantHeading(new Vector2d(0, 0), Math.PI / 2)
-                        .turnTo(0)
-                        .build();
-
-        while (opModeIsActive() && state != State.DONE) {
-            switch (state) {
-
-                case MOVE_TO_SHOOT_1:
-                    if (moveToShoot1.run(null)) break;
-                    state = State.SHOOT_1;
-                    break;
-
-                case SHOOT_1:
-                    sleep(2000);
-                    state = State.GET_SET_2;
-                    break;
-
-                case GET_SET_2:
-                    if (getSet2.run(null)) break;
-                    state = State.MOVE_TO_SHOOT_2;
-                    break;
-
-                case MOVE_TO_SHOOT_2:
-                    if (moveToShoot2.run(null)) break;
-                    state = State.SHOOT_2;
-                    break;
-
-                case SHOOT_2:
-                    sleep(2000);
-                    state = State.RESET_HEADING;
-                    break;
-
-                case RESET_HEADING:
-                    if (resetHeading.run(null)) break;
-                    state = State.DONE;
-                    break;
-            }
-        }
+        MecanumDrive.PARAMS.axialGain = oldAxial;
+        MecanumDrive.PARAMS.lateralGain = oldLateral;
     }
 }
