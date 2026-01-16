@@ -21,14 +21,14 @@ public class Auto_Blue_Far extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        // 1️⃣ DRIVE LEFT 3 inches
+
         Action driveLeft = drive.actionBuilder(startPose)
                 .lineToX(57)
                 .build();
 
         Actions.runBlocking(driveLeft);
 
-        // 2️⃣ TURN IN PLACE (no translation drift)
+
         double oldAxial = MecanumDrive.PARAMS.axialGain;
         double oldLateral = MecanumDrive.PARAMS.lateralGain;
 
