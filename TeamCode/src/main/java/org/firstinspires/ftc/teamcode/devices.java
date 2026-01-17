@@ -22,8 +22,8 @@ public class devices {
     public CRServo Up1;
     public CRServo Up2;
 
-    public CRServo V1;
-    public CRServo V2;
+    public CRServo Up3;
+
 
     public void init(HardwareMap hwMap) {
 
@@ -43,8 +43,8 @@ public class devices {
         Up1 = hwMap.get(CRServo.class, "Up1");
         Up2 = hwMap.get(CRServo.class, "Up2");
 
-        V1 = hwMap.get(CRServo.class, "V1");
-        V2 = hwMap.get(CRServo.class, "V2");
+        Up3 = hwMap.get(CRServo.class, "Up3");
+
 
 
         rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
