@@ -77,8 +77,7 @@ public class TeleOpV1 extends DriveBase {
             Outtake_stop();
         }
 
-        // Worm motor with multiplier
-        robot.Worm.setPower(gamepad2.left_stick_y * RobotConstants.wormMultiplier);
+
 
         // Intake motor with multiplier
         double intakePower = -gamepad2.right_stick_y * RobotConstants.intakeMultiplier;
