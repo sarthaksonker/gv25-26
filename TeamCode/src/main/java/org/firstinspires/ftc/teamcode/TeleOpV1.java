@@ -62,31 +62,29 @@ public class TeleOpV1 extends DriveBase {
             robot.motor2.setPower(0);
         }
 
-        // Intake / Outtake
-        if (gamepad2.right_bumper){
+// Intake / Outtake buttons
+        if (gamepad2.right_bumper) {
             intake();
-        }
-        else {
-            intake_stop();
+        } else if (gamepad2.left_bumper) {
+            Outtake();
+        } else {
+            // Only use joystick if no bumpers are pressed
+            double intakePower = -gamepad2.right_stick_y * RobotConstants.intakeMultiplier;
+            robot.Intake.setPower(intakePower);
+            robot.Up1.setPower(0);
+            robot.Up2.setPower(0);
         }
 
-        if (gamepad2.left_bumper) {
-            Outtake();
-        }
-        else {
-            Outtake_stop();
-        }
 
 
 
         // Intake motor with multiplier
-        double intakePower = -gamepad2.right_stick_y * RobotConstants.intakeMultiplier;
-        robot.Intake.setPower(intakePower);
+//        double intakePower = -gamepad2.right_stick_y * RobotConstants.intakeMultiplier;
+//        robot.Intake.setPower(intakePower);
 
         // TELEMETRY
         telemetry.addData("Shooter Power", robot.motor1.getPower());
-        telemetry.addData("Intake Power", intakePower);
-        telemetry.addData("Worm Power", robot.Worm.getPower());
+//        telemetry.addData("Intake Power", intakePower);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
     }

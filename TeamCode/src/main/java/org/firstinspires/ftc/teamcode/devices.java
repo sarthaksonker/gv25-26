@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,7 +14,6 @@ public class devices {
     public DcMotorEx rightFrontDrive;
     public DcMotorEx rightBackDrive;
 
-    public DcMotorEx Worm;
     public DcMotorEx Intake;
 
     public DcMotorEx motor1;
@@ -24,6 +24,7 @@ public class devices {
 
     public CRServo Up3;
 
+    public Limelight3A limelight;
 
     public void init(HardwareMap hwMap) {
 
@@ -32,9 +33,8 @@ public class devices {
         leftBackDrive   = hwMap.get(DcMotorEx.class, "lb");
         rightFrontDrive = hwMap.get(DcMotorEx.class, "rf");
         rightBackDrive  = hwMap.get(DcMotorEx.class, "rb");
+        
 
-
-        Worm   = hwMap.get(DcMotorEx.class, "Worm");
         Intake = hwMap.get(DcMotorEx.class, "Intake");
 
         motor1 = hwMap.get(DcMotorEx.class, "SL");
@@ -67,7 +67,6 @@ public class devices {
         rightFrontDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
-        Worm.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
     }
