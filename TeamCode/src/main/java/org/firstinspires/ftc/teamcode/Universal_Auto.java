@@ -14,9 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 import java.util.Locale;
 
-@Autonomous(name="Red_Far_PP", group="Pinpoint")
+@Autonomous(name="Universal_Near_PP", group="Pinpoint")
 
-public class Auto_Red_Far extends LinearOpMode {
+public class Universal_Auto extends LinearOpMode {
 
     DcMotor leftFrontDrive;
     DcMotor rightFrontDrive;
@@ -36,11 +36,11 @@ public class Auto_Red_Far extends LinearOpMode {
         DRIVE_TO_TARGET_5
     }
 
-    static final Pose2D TARGET_1 = new Pose2D(DistanceUnit.INCH,110,0,AngleUnit.DEGREES,135);
-    static final Pose2D TARGET_2 = new Pose2D(DistanceUnit.INCH, 110, 0, AngleUnit.DEGREES, 135);
-    static final Pose2D TARGET_3 = new Pose2D(DistanceUnit.INCH,110,0, AngleUnit.DEGREES,135);
-    static final Pose2D TARGET_4 = new Pose2D(DistanceUnit.INCH, 110, 0, AngleUnit.DEGREES, 135);
-    static final Pose2D TARGET_5 = new Pose2D(DistanceUnit.INCH, 110, 0, AngleUnit.DEGREES, 135);
+    static final Pose2D TARGET_1 = new Pose2D(DistanceUnit.INCH,60,0,AngleUnit.DEGREES,0);
+    static final Pose2D TARGET_2 = new Pose2D(DistanceUnit.INCH, 60, 0, AngleUnit.DEGREES, 0);
+    static final Pose2D TARGET_3 = new Pose2D(DistanceUnit.INCH,60,0, AngleUnit.DEGREES,0);
+    static final Pose2D TARGET_4 = new Pose2D(DistanceUnit.INCH, 60, 0, AngleUnit.DEGREES, 0);
+    static final Pose2D TARGET_5 = new Pose2D(DistanceUnit.INCH, 60, 0, AngleUnit.DEGREES, 0);
 
     public void runOpMode() {
 
@@ -52,15 +52,15 @@ public class Auto_Red_Far extends LinearOpMode {
         leftBackDrive   = hardwareMap.get(DcMotor.class, "lb");
         rightBackDrive  = hardwareMap.get(DcMotor.class, "rb");
 
-         DcMotorEx Intake;
+        DcMotorEx Intake;
 
-         DcMotorEx motor1;
-         DcMotorEx motor2;
+        DcMotorEx motor1;
+        DcMotorEx motor2;
 
-         CRServo Up1;
-         CRServo Up2;
+        CRServo Up1;
+        CRServo Up2;
 
-         CRServo Up3;
+        CRServo Up3;
 
         Intake = hardwareMap.get(DcMotorEx.class, "Intake");
 
@@ -82,7 +82,6 @@ public class Auto_Red_Far extends LinearOpMode {
 
         motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
 
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
@@ -142,8 +141,8 @@ public class Auto_Red_Far extends LinearOpMode {
                     }
                     break;
                 case DRIVE_TO_TARGET_3:
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
+                    motor1.setPower(-0.32);
+                    motor2.setPower(0.32);
                     if(nav.driveTo(odo.getPosition(), TARGET_3, 0.7, 3)){
                         telemetry.addLine("at position #3");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_4;
@@ -160,7 +159,7 @@ public class Auto_Red_Far extends LinearOpMode {
                 case DRIVE_TO_TARGET_5:
                     motor1.setPower(-0.3);
                     motor2.setPower(0.3);
-                    Intake.setPower(-0.75);
+                    Intake.setPower(-1);
                     Up1.setPower(-1);
                     Up2.setPower(-1);
                     if(nav.driveTo(odo.getPosition(),TARGET_5,0.7,5)){

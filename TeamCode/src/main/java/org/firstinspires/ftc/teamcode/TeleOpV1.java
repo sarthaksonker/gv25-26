@@ -67,13 +67,19 @@ public class TeleOpV1 extends DriveBase {
             intake();
         } else if (gamepad2.left_bumper) {
             Outtake();
-        } else {
+        }
+        else {
             // Only use joystick if no bumpers are pressed
             double intakePower = -gamepad2.right_stick_y * RobotConstants.intakeMultiplier;
             robot.Intake.setPower(intakePower);
             robot.Up1.setPower(0);
             robot.Up2.setPower(0);
         }
+
+        if (gamepad2.dpad_down){
+            IntakeWithOutTop();
+        }
+
 
 
 

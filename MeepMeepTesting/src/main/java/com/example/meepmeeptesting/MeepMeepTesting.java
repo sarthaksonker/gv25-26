@@ -64,7 +64,7 @@ public class MeepMeepTesting {
 //
 //                        .turnTo(0)
 
-                .splineToConstantHeading(new Vector2d(52, -22), Math.PI / 6)
+
                         .lineToX(57)
                 .turn(Math.PI /0.95)
 

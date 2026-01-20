@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -12,9 +14,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
 import java.util.Locale;
 
-@Autonomous(name="Pinpoint Navigation", group="Pinpoint")
+@Autonomous(name="Blue_Far_PP", group="Pinpoint")
 
-public class SensorPinpointDriveToPoint extends LinearOpMode {
+public class Auto_Blue_Far_PP extends LinearOpMode {
 
     DcMotor leftFrontDrive;
     DcMotor rightFrontDrive;
@@ -34,21 +36,41 @@ public class SensorPinpointDriveToPoint extends LinearOpMode {
         DRIVE_TO_TARGET_5
     }
 
-    static final Pose2D TARGET_1 = new Pose2D(DistanceUnit.MM,80,0,AngleUnit.DEGREES,0);
-    static final Pose2D TARGET_2 = new Pose2D(DistanceUnit.MM, 0, 80, AngleUnit.DEGREES, 0);
-    static final Pose2D TARGET_3 = new Pose2D(DistanceUnit.MM,80,80, AngleUnit.DEGREES,0);
-    static final Pose2D TARGET_4 = new Pose2D(DistanceUnit.MM, 80, 80, AngleUnit.DEGREES, 0);
-    static final Pose2D TARGET_5 = new Pose2D(DistanceUnit.MM, 80, 80, AngleUnit.DEGREES, 0);
+    static final Pose2D TARGET_1 = new Pose2D(DistanceUnit.INCH,115,0,AngleUnit.DEGREES,-135);
+    static final Pose2D TARGET_2 = new Pose2D(DistanceUnit.INCH, 115, 0, AngleUnit.DEGREES, -135);
+    static final Pose2D TARGET_3 = new Pose2D(DistanceUnit.INCH,115,0, AngleUnit.DEGREES,-135);
+    static final Pose2D TARGET_4 = new Pose2D(DistanceUnit.INCH, 115, 0, AngleUnit.DEGREES, -135);
+    static final Pose2D TARGET_5 = new Pose2D(DistanceUnit.INCH, 115, 0, AngleUnit.DEGREES, -135);
 
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
 
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "leftFrontDrive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFrontDrive");
-        leftBackDrive   = hardwareMap.get(DcMotor.class, "leftRearDrive");
-        rightBackDrive  = hardwareMap.get(DcMotor.class, "rightRearDrive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "rf");
+        leftBackDrive   = hardwareMap.get(DcMotor.class, "lb");
+        rightBackDrive  = hardwareMap.get(DcMotor.class, "rb");
+
+        DcMotorEx Intake;
+
+        DcMotorEx motor1;
+        DcMotorEx motor2;
+
+        CRServo Up1;
+        CRServo Up2;
+
+        CRServo Up3;
+
+        Intake = hardwareMap.get(DcMotorEx.class, "Intake");
+
+        motor1 = hardwareMap.get(DcMotorEx.class, "SL");
+        motor2 = hardwareMap.get(DcMotorEx.class, "SR");
+
+        Up1 = hardwareMap.get(CRServo.class, "Up1");
+        Up2 = hardwareMap.get(CRServo.class, "Up2");
+
+        Up3 = hardwareMap.get(CRServo.class, "Up3");
 
         leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -58,10 +80,15 @@ public class SensorPinpointDriveToPoint extends LinearOpMode {
         leftFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        odo = hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-        odo.setOffsets(-192.0, 0, DistanceUnit.MM); //these are tuned for 3110-0002-0001 Product Insight #1
+        motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+        odo = hardwareMap.get(GoBildaPinpointDriver.class,"pinpoint");
+        odo.setOffsets(-3.5, -5.75, DistanceUnit.INCH); //these are tuned for 3110-0002-0001 Product Insight #1
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_SWINGARM_POD);
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED, GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         odo.resetPosAndIMU();
 
@@ -97,6 +124,8 @@ public class SensorPinpointDriveToPoint extends LinearOpMode {
                     the robot has reached the target, and has been there for (holdTime) seconds.
                     Once driveTo returns true, it prints a telemetry line and moves the state machine forward.
                      */
+                    motor1.setPower(-0.3);
+                    motor2.setPower(0.3);
                     if (nav.driveTo(odo.getPosition(), TARGET_1, 0.7, 0)){
                         telemetry.addLine("at position #1!");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_2;
@@ -104,25 +133,36 @@ public class SensorPinpointDriveToPoint extends LinearOpMode {
                     break;
                 case DRIVE_TO_TARGET_2:
                     //drive to the second target
+                    motor1.setPower(-0.3);
+                    motor2.setPower(0.3);
                     if (nav.driveTo(odo.getPosition(), TARGET_2, 0.7, 1)){
                         telemetry.addLine("at position #2!");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_3;
                     }
                     break;
                 case DRIVE_TO_TARGET_3:
+                    motor1.setPower(-0.3);
+                    motor2.setPower(0.3);
                     if(nav.driveTo(odo.getPosition(), TARGET_3, 0.7, 3)){
                         telemetry.addLine("at position #3");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_4;
                     }
                     break;
                 case DRIVE_TO_TARGET_4:
+                    motor1.setPower(-0.3);
+                    motor2.setPower(0.3);
                     if(nav.driveTo(odo.getPosition(),TARGET_4,0.7,1)){
                         telemetry.addLine("at position #4");
                         stateMachine = StateMachine.DRIVE_TO_TARGET_5;
                     }
                     break;
                 case DRIVE_TO_TARGET_5:
-                    if(nav.driveTo(odo.getPosition(),TARGET_5,0.7,1)){
+                    motor1.setPower(-0.3);
+                    motor2.setPower(0.3);
+                    Intake.setPower(-1);
+                    Up1.setPower(-1);
+                    Up2.setPower(-1);
+                    if(nav.driveTo(odo.getPosition(),TARGET_5,0.7,5)){
                         telemetry.addLine("There!");
                         stateMachine = StateMachine.AT_TARGET;
                     }

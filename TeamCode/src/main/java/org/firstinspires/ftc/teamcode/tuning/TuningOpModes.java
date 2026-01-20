@@ -165,10 +165,10 @@ public final class TuningOpModes {
                     perpEncs.add(new EncoderRef(0, 1));
                 } else if (md.localizer instanceof OTOSLocalizer) {
                     OTOSLocalizer ol = (OTOSLocalizer) md.localizer;
-                    encoderGroups.add(new OTOSEncoderGroup(ol.otos));
+                    encoderGroups.add(new OTOSEncoderGroup(ol.getOtos())); // fixed
                     parEncs.add(new EncoderRef(0, 0));
                     perpEncs.add(new EncoderRef(0, 1));
-                    lazyImu = new OTOSIMU(ol.otos);
+                    lazyImu = new OTOSIMU(ol.getOtos()); // fixed
                 }  else if (md.localizer instanceof PinpointLocalizer) {
                     PinpointView pv = makePinpointView((PinpointLocalizer) md.localizer);
                     encoderGroups.add(new PinpointEncoderGroup(pv));
@@ -180,7 +180,7 @@ public final class TuningOpModes {
                 }
 
                 return new DriveView(
-                    DriveType.MECANUM,
+                        DriveType.MECANUM,
                         MecanumDrive.PARAMS.inPerTick,
                         MecanumDrive.PARAMS.maxWheelVel,
                         MecanumDrive.PARAMS.minProfileAccel,
@@ -254,10 +254,10 @@ public final class TuningOpModes {
                     lazyImu = new PinpointIMU(pv);
                 } else if (td.localizer instanceof OTOSLocalizer) {
                     OTOSLocalizer ol = (OTOSLocalizer) td.localizer;
-                    encoderGroups.add(new OTOSEncoderGroup(ol.otos));
+                    encoderGroups.add(new OTOSEncoderGroup(ol.getOtos())); // fixed
                     parEncs.add(new EncoderRef(0, 0));
                     perpEncs.add(new EncoderRef(0, 1));
-                    lazyImu = new OTOSIMU(ol.otos);
+                    lazyImu = new OTOSIMU(ol.getOtos()); // fixed
                 } else {
                     throw new RuntimeException("unknown localizer: " + td.localizer.getClass().getName());
                 }

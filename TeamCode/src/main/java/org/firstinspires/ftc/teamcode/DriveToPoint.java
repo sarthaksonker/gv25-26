@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
+import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.INCH;
 import static org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit.MM;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -112,7 +113,7 @@ public class DriveToPoint {
             double hPWR;
             double headingTowardsTarget = calculateTargetHeading(currentPosition,targetPosition);
             double lengthToTarget = Math.hypot((targetPosition.getX(MM) - currentPosition.getX(MM)),(targetPosition.getY(MM) - currentPosition.getY(MM)));
-            Pose2D temp = new Pose2D(MM,targetPosition.getX(MM),targetPosition.getY(MM),RADIANS,headingTowardsTarget);
+            Pose2D temp = new Pose2D(INCH,targetPosition.getX(MM),targetPosition.getY(MM),RADIANS,headingTowardsTarget);
 
             if (headingTowardsTarget > (Math.PI/2) || headingTowardsTarget < -(Math.PI/2)){
                 //headingTowardsTarget -= Math.PI;

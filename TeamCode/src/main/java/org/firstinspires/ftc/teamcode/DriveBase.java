@@ -47,6 +47,11 @@ public class DriveBase extends OpMode {
         robot.Intake.setPower(0);
     }
 
+    public void IntakeWithOutTop() {
+        robot.Up1.setPower(-1);
+        robot.Intake.setPower(-1);
+    }
+
 
 
     public void omniDrive(double y, double x, double rx, double factor) {
