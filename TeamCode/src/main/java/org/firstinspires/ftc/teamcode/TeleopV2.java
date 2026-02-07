@@ -3,17 +3,26 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 
-@TeleOp(name="Driver Control", group="Test")
-public class TeleOpV1 extends DriveBase {
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+@TeleOp(name="Driver Control with Pinpoint", group="Test")
+public class TeleopV2 extends DriveBase {
+
+    // ===== PINPOINT =====
+    GoBildaPinpointDriver odometry;
 
     @Override
     public void init() {
-        super.init(); // initialize motors in DriveBase
+        super.init(); // keep your original init
+
+        // Initialize Pinpoint
+        odometry = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        odometry.resetPosAndIMU();
+
+        // Add dashboard telemetry
         telemetry = new MultipleTelemetry(
                 telemetry,
                 FtcDashboard.getInstance().getTelemetry()
@@ -26,6 +35,11 @@ public class TeleOpV1 extends DriveBase {
 
     @Override
     public void loop() {
+
+        // ===== UPDATE ODOMETRY =====
+        if (odometry != null) {
+            odometry.update();
+        }
 
         double leftStickX = square(-gamepad1.left_stick_x);
         double leftStickY = square(gamepad1.left_stick_y);
@@ -40,7 +54,7 @@ public class TeleOpV1 extends DriveBase {
             omniDrive(leftStickY, leftStickX, rightStickX, RobotConstants.normalMultiplier);
         }
 
-        // Shooter powers with constants
+        // Shooter powers
         if(gamepad2.a){
             robot.motor1.setPower(RobotConstants.power1);
             robot.motor2.setPower(RobotConstants.power1);
@@ -62,7 +76,7 @@ public class TeleOpV1 extends DriveBase {
             robot.motor2.setPower(0);
         }
 
-// Intake / Outtake buttons
+        // Intake / Outtake buttons
         if (gamepad2.right_bumper) {
             intake();
         } else if (gamepad2.left_bumper) {
@@ -77,22 +91,22 @@ public class TeleOpV1 extends DriveBase {
             robot.Up3.setPower(0);
         }
 
+
         if (gamepad2.dpad_down){
             IntakeWithOutTop();
         }
 
-
-
-
-
-        // Intake motor with multiplier1
-//        double intakePower = -gamepad2.right_stick_y * RobotConstants.intakeMultiplier;
-//        robot.Intake.setPower(intakePower);
-
-        // TELEMETRY
+        // ===== TELEMETRY =====
         telemetry.addData("Shooter Power", robot.motor1.getPower());
-//        telemetry.addData("Intake Power", intakePower);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
+
+        // ===== PINPOINT TELEMETRY =====
+        if (odometry != null) {
+            telemetry.addData("X (in)", odometry.getPosX(DistanceUnit.INCH));
+            telemetry.addData("Y (in)", odometry.getPosY(DistanceUnit.INCH));
+            telemetry.addData("Heading (deg)", Math.toDegrees(odometry.getHeading(AngleUnit.DEGREES)));
+        }
+
         telemetry.update();
     }
 }

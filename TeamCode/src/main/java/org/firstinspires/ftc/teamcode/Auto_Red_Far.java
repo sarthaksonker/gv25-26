@@ -163,6 +163,7 @@ public class Auto_Red_Far extends LinearOpMode {
                     Intake.setPower(-0.75);
                     Up1.setPower(-1);
                     Up2.setPower(-1);
+                    Up3.setPower(-1);
                     if(nav.driveTo(odo.getPosition(),TARGET_5,0.7,5)){
                         telemetry.addLine("There!");
                         stateMachine = StateMachine.AT_TARGET;

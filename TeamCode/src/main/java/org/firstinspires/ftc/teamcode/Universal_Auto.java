@@ -162,6 +162,7 @@ public class Universal_Auto extends LinearOpMode {
                     Intake.setPower(-1);
                     Up1.setPower(-1);
                     Up2.setPower(-1);
+                    Up3.setPower(-1);
                     if(nav.driveTo(odo.getPosition(),TARGET_5,0.7,5)){
                         telemetry.addLine("There!");
                         stateMachine = StateMachine.AT_TARGET;
