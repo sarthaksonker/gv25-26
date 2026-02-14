@@ -45,7 +45,7 @@ public class The_villan_Red extends LinearOpMode {
     static final Pose2D TARGET_1 = new Pose2D(DistanceUnit.INCH, 110, 0, AngleUnit.DEGREES, 135);
     static final Pose2D TARGET_2 = new Pose2D(DistanceUnit.INCH, 50, 0, AngleUnit.DEGREES, 0);
     static final Pose2D TARGET_3 = new Pose2D(DistanceUnit.INCH, 41, 0, AngleUnit.DEGREES, -90);
-    static final Pose2D TARGET_4 = new Pose2D(DistanceUnit.INCH, 41, -48, AngleUnit.DEGREES, -90);
+    static final Pose2D TARGET_4 = new Pose2D(DistanceUnit.INCH, 41, -52, AngleUnit.DEGREES, -90);
     static final Pose2D TARGET_5 = new Pose2D(DistanceUnit.INCH, 110, 0, AngleUnit.DEGREES, 135);
 
     @Override

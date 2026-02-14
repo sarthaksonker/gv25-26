@@ -17,55 +17,55 @@ public class MeepMeepTesting {
 
         myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(64, -22,Math.toRadians(180) ))
 
-//                .splineToLinearHeading(
-//                        new Pose2d(0, 0, Math.PI / -6),
-//                        Math.PI / 3
-//                )
-//
-//                // Move to (0,0) WITHOUT changing heading
-//                .splineToConstantHeading(
-//                        new Vector2d(0, 0),
-//                        Math.PI / 3
-//                )
-//
-//                // THEN set heading at the end
-//                .turn(-Math.PI / 6)
-//
-//                        .lineToX(0)
-//                .splineToConstantHeading(
-//                        new Vector2d(0, 0),
-//                        Math.PI / 6
-//                )
-//                .turn(Math.PI / 7)
-//
-//
-//                        .waitSeconds(2)
-//
-//                        .lineToX(10)
-//                        .turnTo(-Math.PI/2)
-//
-//                        .lineToY(-46.5)
-//                .waitSeconds(3)
-//
-//                .splineToConstantHeading(
-//                        new Vector2d(0, 0),
-//                        Math.PI / 6
-//                )
-//                .turn(-Math.PI / 4)
-//
-//
-//
-//                        .waitSeconds(3)
-//
-//                .splineToConstantHeading(
-//                        new Vector2d(0, 0),
-//                        Math.PI / 2
-//                )
-//
-//                        .turnTo(0)
+                .splineToLinearHeading(
+                        new Pose2d(0, 0, Math.PI / -6),
+                        Math.PI / 3
+                )
+
+                // Move to (0,0) WITHOUT changing heading
+                .splineToConstantHeading(
+                        new Vector2d(0, 0),
+                        Math.PI / 3
+                )
+
+                // THEN set heading at the end
+                .turn(-Math.PI / 6)
+
+                        .lineToX(0)
+                .splineToConstantHeading(
+                        new Vector2d(0, 0),
+                        Math.PI / 6
+                )
+                .turn(Math.PI / 7)
 
 
-                        .lineToX(-12)
+                        .waitSeconds(2)
+
+                        .lineToX(10)
+                        .turnTo(-Math.PI/2)
+
+                        .lineToY(-46.5)
+                .waitSeconds(3)
+
+                .splineToConstantHeading(
+                        new Vector2d(0, 0),
+                        Math.PI / 6
+                )
+                .turn(-Math.PI / 4)
+
+
+
+                        .waitSeconds(3)
+
+                .splineToConstantHeading(
+                        new Vector2d(0, 0),
+                        Math.PI / 2
+                )
+
+                        .turnTo(0)
+
+
+
 
 
 
