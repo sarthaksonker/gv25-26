@@ -45,7 +45,7 @@ public class Blue_Near extends LinearOpMode {
             new Pose2D(DistanceUnit.INCH, 78, 0, AngleUnit.DEGREES, -135);
 
     static final Pose2D GET_STACK =
-            new Pose2D(DistanceUnit.INCH, 40, -28, AngleUnit.DEGREES, -135);
+            new Pose2D(DistanceUnit.INCH, 53, -42, AngleUnit.DEGREES, -135);
 
     static final Pose2D MOVE_TO_SHOOT_2 =
             new Pose2D(DistanceUnit.INCH, 60, 0, AngleUnit.DEGREES, 0);
@@ -115,9 +115,9 @@ public class Blue_Near extends LinearOpMode {
 
                 case WARM_UP_SHOOTER:
                     nav.driveTo(odo.getPosition(), holdPose, 0.4, 0);
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
-                    if (shooterTimer.seconds() >= 5.0) {
+                    motor1.setPower(-0.27);
+                    motor2.setPower(0.27);
+                    if (shooterTimer.seconds() >= 6.0) {
                         shooterTimer.reset();
                         state = StateMachine.SHOOT;
                     }
@@ -125,8 +125,8 @@ public class Blue_Near extends LinearOpMode {
 
                 case SHOOT:
                     nav.driveTo(odo.getPosition(), holdPose, 0.4, 0);
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
+                    motor1.setPower(-0.27);
+                    motor2.setPower(0.27);
                     Intake.setPower(-0.75);
                     Up1.setPower(-1);
                     Up2.setPower(-1);
@@ -138,29 +138,31 @@ public class Blue_Near extends LinearOpMode {
                         Up1.setPower(0);
                         Up2.setPower(0);
                         Up3.setPower(0);
-                        state = StateMachine.Ready1;
+
+                        shooterTimer.reset();   // ✅ FIXED
+                        state = Blue_Near.StateMachine.Ready1;
                     }
                     break;
 
                 case Ready1:
-                    if (nav.driveTo(odo.getPosition(), Ready1, 0.6, 0)) {
+                    if (nav.driveTo(odo.getPosition(), Ready1, 0.4, 0)
+                            || shooterTimer.seconds() > 2.0) {
+
                         holdPose = odo.getPosition();
                         shooterTimer.reset();
-                        state = StateMachine.GET_STACK;
+                        state = Blue_Near.StateMachine.GET_STACK;
                     }
                     break;
 
                 case GET_STACK:
-                    nav.driveTo(odo.getPosition(), GET_STACK, 0.6, 0);
+                    nav.driveTo(odo.getPosition(), GET_STACK, 0.2, 0);
 
-                    // Intake for first 2 seconds
-                    if (shooterTimer.seconds() <= 1.3) {
-                        Intake.setPower(-0.75);
+                    if (shooterTimer.seconds() <= 2.2) {
+                        Intake.setPower(-1);
                         Up1.setPower(-1);
                         Up2.setPower(-1);
                         Up3.setPower(-1);
                     }
-                    // Stop all motors for next 3 seconds
                     else if (shooterTimer.seconds() <= 5.0) {
                         Intake.setPower(0);
                         Up1.setPower(0);
@@ -170,7 +172,7 @@ public class Blue_Near extends LinearOpMode {
                     else {
                         holdPose = odo.getPosition();
                         shooterTimer.reset();
-                        state = StateMachine.MOVE_TO_SHOOT_2;
+                        state = Blue_Near.StateMachine.MOVE_TO_SHOOT_2;
                     }
                     break;
 
@@ -184,8 +186,8 @@ public class Blue_Near extends LinearOpMode {
 
                 case SHOOT2:
                     nav.driveTo(odo.getPosition(), holdPose, 0.4, 0);
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
+                    motor1.setPower(-0.27);
+                    motor2.setPower(0.27);
                     Intake.setPower(-0.75);
                     Up1.setPower(-1);
                     Up2.setPower(-1);

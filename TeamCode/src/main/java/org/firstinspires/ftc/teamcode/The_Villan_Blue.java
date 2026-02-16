@@ -104,8 +104,8 @@ public class The_Villan_Blue extends LinearOpMode {
 
                 case DRIVE_TO_TARGET_1:
                     // Spin shooters while driving
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
+                    motor1.setPower(-0.27);
+                    motor2.setPower(0.27);
 
                     if (nav.driveTo(odo.getPosition(), TARGET_1, 1.0, 0)) {
                         holdPose = odo.getPosition();
@@ -116,8 +116,8 @@ public class The_Villan_Blue extends LinearOpMode {
 
                 case WARM_UP_SHOOTER:
                     nav.driveTo(odo.getPosition(), holdPose, 1.0, 0);
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
+                    motor1.setPower(-0.27);
+                    motor2.setPower(0.27);
 
                     if (shooterTimer.seconds() >= 2.0) { //
                         shooterTimer.reset();
@@ -127,8 +127,8 @@ public class The_Villan_Blue extends LinearOpMode {
 
                 case SHOOT:
                     nav.driveTo(odo.getPosition(), holdPose, 1.0, 0);
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
+                    motor1.setPower(-0.27);
+                    motor2.setPower(0.27);
                     Intake.setPower(-0.75);
                     Up1.setPower(-1);
                     Up2.setPower(-1);
@@ -172,8 +172,8 @@ public class The_Villan_Blue extends LinearOpMode {
                     break;
 
                 case DRIVE_TO_TARGET_5:
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
+                    motor1.setPower(-0.27);
+                    motor2.setPower(0.27);
                     Intake.setPower(-0.75);
                     Up1.setPower(-1);
 
@@ -188,8 +188,8 @@ public class The_Villan_Blue extends LinearOpMode {
 
                 case SHOOT2:
                     nav.driveTo(odo.getPosition(), holdPose, 1.0, 0);
-                    motor1.setPower(-0.3);
-                    motor2.setPower(0.3);
+                    motor1.setPower(-0.27);
+                    motor2.setPower(0.27);
                     Intake.setPower(-0.75);
                     Up1.setPower(-1);
                     Up2.setPower(-1);
