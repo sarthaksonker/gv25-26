@@ -30,6 +30,12 @@ public class DriveBase extends OpMode {
         robot.Up3.setPower(-1);
         robot.Intake.setPower(-1);
     }
+
+    public void shoot(){
+        robot.Up1.setPower(-1);
+        robot.Up2.setPower(-1);
+        robot.Up3.setPower(-1);
+    }
     public void intake_stop() {
         robot.Up1.setPower(0);
         robot.Up2.setPower(0);
@@ -51,9 +57,10 @@ public class DriveBase extends OpMode {
         robot.Intake.setPower(0);
     }
 
-    public void IntakeWithOutTop() {
+    public void IntakeWithOutTop() { // this is the dpad down intake, to go back js take out the up 3 line
         robot.Up1.setPower(-1);
         robot.Up2.setPower(-1);
+        robot.Up3.setPower(1);
         robot.Intake.setPower(-1);
     }
 

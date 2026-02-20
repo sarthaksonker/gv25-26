@@ -22,19 +22,19 @@ public class devices {
 
     public CRServo Up1;
     public CRServo Up2;
-
     public CRServo Up3;
+
+    public Servo rgbLight;
+
 
     public Limelight3A limelight;
 
     public void init(HardwareMap hwMap) {
 
-
         leftFrontDrive  = hwMap.get(DcMotorEx.class, "lf");
         leftBackDrive   = hwMap.get(DcMotorEx.class, "lb");
         rightFrontDrive = hwMap.get(DcMotorEx.class, "rf");
         rightBackDrive  = hwMap.get(DcMotorEx.class, "rb");
-        
 
         Intake = hwMap.get(DcMotorEx.class, "Intake");
 
@@ -43,10 +43,10 @@ public class devices {
 
         Up1 = hwMap.get(CRServo.class, "Up1");
         Up2 = hwMap.get(CRServo.class, "Up2");
-
         Up3 = hwMap.get(CRServo.class, "Up3");
 
 
+        rgbLight = hwMap.get(Servo.class, "Light1");
 
         rightFrontDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -62,13 +62,10 @@ public class devices {
         rightFrontDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
 
-
         leftFrontDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         motor1.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);

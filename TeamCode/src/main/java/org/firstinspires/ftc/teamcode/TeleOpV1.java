@@ -3,12 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes;
-import com.qualcomm.hardware.limelightvision.LLStatus;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 
-@TeleOp(name="Driver Control", group="Test")
+@TeleOp(name="Driver Control Red", group="Test")
 public class TeleOpV1 extends DriveBase {
 
     @Override
@@ -18,6 +14,9 @@ public class TeleOpV1 extends DriveBase {
                 telemetry,
                 FtcDashboard.getInstance().getTelemetry()
         );
+
+        // --- Set RGB light to red ---
+        robot.rgbLight.setPosition(0.277);
     }
 
     public double square(double value){
@@ -31,7 +30,7 @@ public class TeleOpV1 extends DriveBase {
         double leftStickY = square(gamepad1.left_stick_y);
         double rightStickX = square(-gamepad1.right_stick_x);
 
-        // Drive with constants
+        // --- Drive ---
         if (gamepad1.left_bumper) {
             omniDrive(leftStickY, leftStickX, rightStickX, RobotConstants.slowMultiplier);
         } else if (gamepad1.right_bumper) {
@@ -40,59 +39,86 @@ public class TeleOpV1 extends DriveBase {
             omniDrive(leftStickY, leftStickX, rightStickX, RobotConstants.normalMultiplier);
         }
 
-        // Shooter powers with constants
+        // --- Shooter powers ---
         if(gamepad2.a){
-            robot.motor1.setPower(RobotConstants.power1);
-            robot.motor2.setPower(RobotConstants.power1);
+            robot.motor1.setVelocity(RobotConstants.power1);
+            robot.motor2.setVelocity(RobotConstants.power1);
         }
         else if (gamepad2.x) {
-            robot.motor1.setPower(RobotConstants.power2);
-            robot.motor2.setPower(RobotConstants.power2);
+            robot.motor1.setVelocity(RobotConstants.power4);
+            robot.motor2.setVelocity(RobotConstants.power4);
         }
         else if (gamepad2.y) {
-            robot.motor1.setPower(RobotConstants.power3);
-            robot.motor2.setPower(RobotConstants.power3);
+            robot.motor1.setVelocity(RobotConstants.power3);
+            robot.motor2.setVelocity(RobotConstants.power3);
         }
         else if (gamepad2.b) {
-            robot.motor1.setPower(RobotConstants.power4);
-            robot.motor2.setPower(RobotConstants.power4);
+            robot.motor1.setVelocity(RobotConstants.power2);
+            robot.motor2.setVelocity(RobotConstants.power2);
         }
         else {
-            robot.motor1.setPower(0);
-            robot.motor2.setPower(0);
+            robot.motor1.setVelocity(0);
+            robot.motor2.setVelocity(0);
         }
 
-// Intake / Outtake buttons
+        // --- Intake / Outtake ---
         if (gamepad2.right_bumper) {
             intake();
         } else if (gamepad2.left_bumper) {
             Outtake();
-        }
-        else {
-            // Only use joystick if no bumpers are pressed
-            double intakePower = -gamepad2.right_stick_y * RobotConstants.intakeMultiplier;
-            robot.Intake.setPower(intakePower);
+        } else {
+            robot.Intake.setPower(0);
             robot.Up1.setPower(0);
             robot.Up2.setPower(0);
             robot.Up3.setPower(0);
+        }
+
+        // --- Right trigger shooting logic ---
+        if (gamepad2.right_trigger > 0.75) {
+            robot.Intake.setPower(-1);
+
+            if (gamepad2.a &&
+                    robot.motor1.getVelocity() >= 650 && robot.motor1.getVelocity() <= 710 &&
+                    robot.motor2.getVelocity() >= 650 && robot.motor2.getVelocity() <= 710) {
+                shoot(); // power1 shot
+            }
+
+            if (gamepad2.x &&
+                    robot.motor1.getVelocity() >= 740 && robot.motor1.getVelocity() <= 780 &&
+                    robot.motor2.getVelocity() >= 740 && robot.motor2.getVelocity() <= 780) {
+                shoot(); // power4 shot
+            }
+
+            if (gamepad2.y &&
+                    robot.motor1.getVelocity() >= 1080 && robot.motor1.getVelocity() <= 1120 &&
+                    robot.motor2.getVelocity() >= 1080 && robot.motor2.getVelocity() <= 1120) {
+                shoot(); // power3 shot
+            }
+
+            if (gamepad2.b &&
+                    robot.motor1.getVelocity() >= 960 && robot.motor1.getVelocity() <= 1000 &&
+                    robot.motor2.getVelocity() >= 960 && robot.motor2.getVelocity() <= 1000) {
+                shoot(); // power2 shot
+            } else {
+                robot.Intake.setPower(0);
+            }
         }
 
         if (gamepad2.dpad_down){
             IntakeWithOutTop();
         }
 
-
-
-
-
-        // Intake motor with multiplier1
-//        double intakePower = -gamepad2.right_stick_y * RobotConstants.intakeMultiplier;
-//        robot.Intake.setPower(intakePower);
-
-        // TELEMETRY
+        // --- Telemetry ---
         telemetry.addData("Shooter Power", robot.motor1.getPower());
-//        telemetry.addData("Intake Power", intakePower);
         telemetry.addData("Status", "Run Time: " + runtime.toString());
         telemetry.update();
+    }
+
+    // --- Shoot method ---
+    public void shoot() {
+        robot.Up1.setPower(-1);
+        robot.Up2.setPower(-1);
+        robot.Up3.setPower(-1);
+        robot.Intake.setPower(-1);
     }
 }

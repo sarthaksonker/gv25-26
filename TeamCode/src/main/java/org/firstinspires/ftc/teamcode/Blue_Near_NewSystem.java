@@ -13,11 +13,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 
-@Autonomous(name="BLUE NEAR Villain", group="Pinpoint")
-public class Blue_Near extends LinearOpMode {
+@Autonomous(name="BLUE NEAR Villain NewSystem", group="Pinpoint")
+public class Blue_Near_NewSystem extends LinearOpMode {
 
     DcMotor leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive;
-    DcMotorEx Intake, motor1, motor2;
+    DcMotorEx Intake, shooterLeft, shooterRight;
     CRServo Up1, Up2, Up3;
 
     GoBildaPinpointDriver odo;
@@ -38,6 +38,7 @@ public class Blue_Near extends LinearOpMode {
         DONE
     }
 
+    // --- Poses ---
     static final Pose2D FORWARD_60 =
             new Pose2D(DistanceUnit.INCH, 60, 0, AngleUnit.DEGREES, 0);
 
@@ -53,17 +54,24 @@ public class Blue_Near extends LinearOpMode {
     static final Pose2D OFF_OF_LINE =
             new Pose2D(DistanceUnit.INCH, 40, -28, AngleUnit.DEGREES, -135);
 
+    // --- Shooter powers ---
+    int power1 = 690;   // normal shot
+    int power2 = 980;   // optional high shot
+    int power3 = 1100;  // optional max shot
+    int power4 = 760;   // optional lower shot
+
     @Override
     public void runOpMode() {
 
+        // --- Hardware mapping ---
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rf");
         leftBackDrive   = hardwareMap.get(DcMotor.class, "lb");
         rightBackDrive  = hardwareMap.get(DcMotor.class, "rb");
 
         Intake = hardwareMap.get(DcMotorEx.class, "Intake");
-        motor1 = hardwareMap.get(DcMotorEx.class, "SL");
-        motor2 = hardwareMap.get(DcMotorEx.class, "SR");
+        shooterLeft = hardwareMap.get(DcMotorEx.class, "SL");
+        shooterRight = hardwareMap.get(DcMotorEx.class, "SR");
 
         Up1 = hardwareMap.get(CRServo.class, "Up1");
         Up2 = hardwareMap.get(CRServo.class, "Up2");
@@ -77,9 +85,8 @@ public class Blue_Near extends LinearOpMode {
         leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
+        shooterLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         odo = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
         odo.setOffsets(-3.5, -5.75, DistanceUnit.INCH);
@@ -116,8 +123,8 @@ public class Blue_Near extends LinearOpMode {
 
                 case WARM_UP_SHOOTER:
                     nav.driveTo(odo.getPosition(), holdPose, 0.4, 0);
-                    motor1.setPower(-0.27);
-                    motor2.setPower(0.27);
+                    shooterLeft.setVelocity(-power1);
+                    shooterRight.setVelocity(power1);
                     if (shooterTimer.seconds() >= 6.0) {
                         shooterTimer.reset();
                         state = StateMachine.SHOOT;
@@ -126,32 +133,22 @@ public class Blue_Near extends LinearOpMode {
 
                 case SHOOT:
                     nav.driveTo(odo.getPosition(), holdPose, 0.4, 0);
-                    motor1.setPower(-0.27);
-                    motor2.setPower(0.27);
-                    Intake.setPower(-0.75);
-                    Up1.setPower(-1);
-                    Up2.setPower(-1);
-                    Up3.setPower(-1);
-                    if (shooterTimer.seconds() >= 7.0) {
-                        motor1.setPower(0);
-                        motor2.setPower(0);
-                        Intake.setPower(0);
-                        Up1.setPower(0);
-                        Up2.setPower(0);
-                        Up3.setPower(0);
 
-                        shooterTimer.reset();   // ✅ FIXED
-                        state = Blue_Near.StateMachine.Ready1;
+                    // Only shoot when velocity is in range 650–710
+                    if (shooterLeft.getVelocity() >= 650 && shooterLeft.getVelocity() <= 710 &&
+                            shooterRight.getVelocity() >= 650 && shooterRight.getVelocity() <= 710) {
+                        shoot(); // fires rings
+                        shooterTimer.reset();
+                        state = StateMachine.Ready1;
                     }
                     break;
 
                 case Ready1:
                     if (nav.driveTo(odo.getPosition(), Ready1, 0.4, 0)
                             || shooterTimer.seconds() > 2.0) {
-
                         holdPose = odo.getPosition();
                         shooterTimer.reset();
-                        state = Blue_Near.StateMachine.GET_STACK;
+                        state = StateMachine.GET_STACK;
                     }
                     break;
 
@@ -163,17 +160,15 @@ public class Blue_Near extends LinearOpMode {
                         Up1.setPower(-1);
                         Up2.setPower(-1);
                         Up3.setPower(-1);
-                    }
-                    else if (shooterTimer.seconds() <= 6.0) {
+                    } else if (shooterTimer.seconds() <= 6.0) {
                         Intake.setPower(0);
                         Up1.setPower(0);
                         Up2.setPower(0);
                         Up3.setPower(0);
-                    }
-                    else {
+                    } else {
                         holdPose = odo.getPosition();
                         shooterTimer.reset();
-                        state = Blue_Near.StateMachine.MOVE_TO_SHOOT_2;
+                        state = StateMachine.MOVE_TO_SHOOT_2;
                     }
                     break;
 
@@ -187,19 +182,16 @@ public class Blue_Near extends LinearOpMode {
 
                 case SHOOT2:
                     nav.driveTo(odo.getPosition(), holdPose, 0.4, 0);
-                    motor1.setPower(-0.27);
-                    motor2.setPower(0.27);
-                    Intake.setPower(-0.75);
-                    Up1.setPower(-1);
-                    Up2.setPower(-1);
-                    Up3.setPower(-1);
-                    if (shooterTimer.seconds() >= 3.0) { // hold 3 sec
-                        motor1.setPower(0);
-                        motor2.setPower(0);
-                        Intake.setPower(0);
-                        Up1.setPower(0);
-                        Up2.setPower(0);
-                        Up3.setPower(0);
+                    shooterLeft.setVelocity(-power1);
+                    shooterRight.setVelocity(power1);
+
+                    // Only shoot when velocity is in range 650–710
+                    if (shooterLeft.getVelocity() >= 650 && shooterLeft.getVelocity() <= 710 &&
+                            shooterRight.getVelocity() >= 650 && shooterRight.getVelocity() <= 710 &&
+                            shooterTimer.seconds() >= 3.0) {
+                        shoot();
+                        shooterLeft.setVelocity(0);
+                        shooterRight.setVelocity(0);
                         state = StateMachine.OFF_OF_LINE;
                     }
                     break;
@@ -216,7 +208,7 @@ public class Blue_Near extends LinearOpMode {
                     break;
             }
 
-            // Apply drive powers every loop so robot moves
+            // Apply drive powers
             leftFrontDrive.setPower(nav.getMotorPower(DriveToPoint.DriveMotor.LEFT_FRONT));
             rightFrontDrive.setPower(nav.getMotorPower(DriveToPoint.DriveMotor.RIGHT_FRONT));
             leftBackDrive.setPower(nav.getMotorPower(DriveToPoint.DriveMotor.LEFT_BACK));
@@ -228,7 +220,16 @@ public class Blue_Near extends LinearOpMode {
             telemetry.addData("X", pos.getX(DistanceUnit.INCH));
             telemetry.addData("Y", pos.getY(DistanceUnit.INCH));
             telemetry.addData("H", pos.getHeading(AngleUnit.DEGREES));
+            telemetry.addData("Shooter Vel L", shooterLeft.getVelocity());
+            telemetry.addData("Shooter Vel R", shooterRight.getVelocity());
             telemetry.update();
         }
+    }
+
+    public void shoot() {
+        Up1.setPower(-1);
+        Up2.setPower(-1);
+        Up3.setPower(-1);
+        Intake.setPower(-1);
     }
 }
